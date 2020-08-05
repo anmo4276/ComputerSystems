@@ -1,0 +1,57 @@
+1. Take function calls out of loops (size, width, height, divisor)
+2. Flip row and column loop (Row should go before column) - Big optimization. Put plane loop first
+3. Change -O0 to -03 in Makefile
+4. getSize() is always 3
+5. Change           output -> color[plane][row][col] = output -> color[plane][row][col] + (input -> color[plane][row + i - 1][col - 1] * filter -> get(i, 0) );
+                    output -> color[plane][row][col] = output -> color[plane][row][col] + (input -> color[plane][row + i - 1][col] * filter -> get(i, 1) );
+                    output -> color[plane][row][col] = output -> color[plane][row][col] + (input -> color[plane][row + i - 1][col + 1] * filter -> get(i, 2) );
+   TO (One Line)
+                    output -> color[plane][row][col] = output -> color[plane][row][col] + (input -> color[plane][row + i - 1][col - 1] * filter -> get(i, 0) ) + (input -> color[plane][row + i - 1][col] * filter -> get(i, 1) ) + (input -> color[plane][row + i - 1][col + 1] * filter -> get(i, 2) );
+6. Take out numerous calls of  output -> color[plane][row][col] by storing sum in int out
+             out += (input -> color[plane][row + i - 1][col - 1] * ....
+7. Change if statements at the end to a nested if statement using "?" operator: (less calls to output and ? is faster than an if)
+
+            output -> color[plane][row][col] = 	
+              output -> color[plane][row][col] / filter -> getDivisor();
+
+            if ( output -> color[plane][row][col]  < 0 ) {
+              output -> color[plane][row][col] = 0;
+            }
+
+            if ( output -> color[plane][row][col]  > 255 ) { 
+              output -> color[plane][row][col] = 255;
+            }
+TO
+            out = out/ divisor;
+            output -> color[plane][row][col] = (out  < 0 ) ? 0: (out  > 255 ) ? 255: out;
+8. Change int to const short
+9. Take out plane for loop and replace with 9 lines that determine all three planes.
+10. Take out calls to filter -> get by using Array filter
+        int filterArray[3][3];
+          filterArray[0][0] = filter -> get(0, 0);
+          filterArray[0][1] = filter -> get(0, 1);
+          filterArray[0][2] = filter -> get(0, 2);
+     
+          filterArray[1][0] = filter -> get(1, 0);
+          filterArray[1][1] = filter -> get(1, 1);
+          filterArray[1][2] = filter -> get(1, 2);
+     
+          filterArray[2][0] = filter -> get(2, 0);
+          filterArray[2][1] = filter -> get(2, 1);
+          filterArray[2][2] = filter -> get(2, 2);
+11. AvgFilter is all 1's. So if all filters == 1, take out multiplication * filterArray:
+                    plane0 = plane0 + (input -> color[0][row0][col - 1] * filterArray[0][0] ) + (input -> color[0][row0]
+                     [col] * filterArray[0][1] ) + (input -> color[0][row0][col + 1] * filterArray[0][2] );
+             TO
+                    plane0 = plane0 + (input -> color[0][row0][col - 1] ) + (input -> color[0][row0]
+                     [col] ) + (input -> color[0][row0][col + 1] );
+12. USE OPENMP (-fopenmp). Place  #pragma omp parallel for before for loops. THis makes them run in parallel https://pages.tacc.utexas.edu/~eijkhout/pcse/html/omp-loop.html
+13. FLAGS: https://gcc.gnu.org/onlinedocs/gcc-4.4.2/gcc/i386-and-x86_002d64-Options.html
+-Ofast - allows compiler to perform optimizations (faster than -O3)
+-fopenmp - allows openmp to operate with multicore processors
+-m32 - changes to 32 bit enviornment (made slightly faster)
+-mpc32 - sets precision to 24 bits, made slightly faster. Defaukt is 80 bits
+-march=native - enable all instruction subsets supported by the local machine
+-Wall - default
+-fno-omit-frame-pointer - default
+-mavx - Allows AVX instructions
