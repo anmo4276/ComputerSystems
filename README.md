@@ -1,4 +1,4 @@
-Computer Systems (CSCI2400)
+Computer Systems (CSCI 2400)
 ---------------------------
 
 Course Content and Textbook
